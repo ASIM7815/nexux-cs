@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 // Neon Storage S3-compatible configuration
@@ -16,10 +16,21 @@ const BUCKET_NAME = process.env.NEON_STORAGE_BUCKET || 'files';
 
 export interface UploadResult {
   success: boolean;
-  fileUrl?: string;
-  fileName?: string;
+  /** Object key only. Never expose a bucket URL as a public download URL. */
+  storageKey?: string;
+  originalFilename?: string;
   fileSize?: number;
+  contentType?: string;
   error?: string;
+}
+
+function storageIsConfigured() {
+  return Boolean(
+    process.env.AWS_ENDPOINT_URL_S3
+    && process.env.AWS_ACCESS_KEY_ID
+    && process.env.AWS_SECRET_ACCESS_KEY
+    && process.env.NEON_STORAGE_BUCKET,
+  );
 }
 
 /**
@@ -31,6 +42,9 @@ export async function uploadFile(
   contentType: string = 'application/octet-stream'
 ): Promise<UploadResult> {
   try {
+    if (!storageIsConfigured()) {
+      return { success: false, error: 'Challenge file storage is not configured' };
+    }
     // Sanitize filename
     const safeFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_');
     const key = `challenges/${Date.now()}-${safeFileName}`;
@@ -44,14 +58,12 @@ export async function uploadFile(
 
     await s3Client.send(command);
 
-    // Generate public URL
-    const fileUrl = `${process.env.AWS_ENDPOINT_URL_S3}/${BUCKET_NAME}/${key}`;
-
     return {
       success: true,
-      fileUrl,
-      fileName: key,
+      storageKey: key,
+      originalFilename: fileName,
       fileSize: file.length,
+      contentType,
     };
   } catch (error: any) {
     console.error('File upload error:', error);
@@ -98,6 +110,17 @@ export async function deleteFile(fileName: string): Promise<boolean> {
   }
 }
 
+/** Check that an opaque challenge object key exists before recording it in SQL. */
+export async function challengeObjectExists(storageKey: string) {
+  if (!storageIsConfigured() || !storageKey.startsWith('challenges/')) return false;
+  try {
+    await s3Client.send(new HeadObjectCommand({ Bucket: BUCKET_NAME, Key: storageKey }));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Upload from FormData (for Next.js API routes)
  */
@@ -123,7 +146,13 @@ export async function uploadFromFormData(
       'application/pdf',
       'application/zip',
       'application/x-zip-compressed',
+      'application/x-7z-compressed',
+      'application/x-rar-compressed',
+      'application/octet-stream', // source code and challenge binaries
       'text/plain',
+      'text/x-c',
+      'text/x-c++src',
+      'application/javascript',
       'image/jpeg',
       'image/png',
       'image/gif',
@@ -144,11 +173,4 @@ export async function uploadFromFormData(
   } catch (error: any) {
     return { success: false, error: error.message };
   }
-}
-
-/**
- * Get public file URL
- */
-export function getPublicUrl(fileName: string): string {
-  return `${process.env.AWS_ENDPOINT_URL_S3}/${BUCKET_NAME}/${fileName}`;
 }

@@ -30,7 +30,6 @@ interface Props {
 
 export default function ScoreboardClient({ rankings: initialRankings, session }: Props) {
   const router = useRouter();
-  const currentAccountId = parseInt(session.user.id);
   const [rankings, setRankings] = useState<Ranking[]>(initialRankings);
 
   // Auto-refresh disabled for stability - data fetches on load only  
@@ -118,7 +117,7 @@ export default function ScoreboardClient({ rankings: initialRankings, session }:
 
             {/* Data Rows */}
             {rankings.map((ranking, index) => {
-              const isCurrentTeam = ranking.id === currentAccountId;
+              const isCurrentTeam = Boolean(session.user.teamName && ranking.teamName === session.user.teamName);
               const rank = index + 1;
               let medal = '';
               if (rank === 1) medal = '🥇';

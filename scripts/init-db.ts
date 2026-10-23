@@ -86,6 +86,7 @@ async function initDatabase() {
         category_id INTEGER REFERENCES categories(id) ON DELETE CASCADE,
         points INTEGER NOT NULL,
         flag VARCHAR(500) NOT NULL,
+        additional_flags TEXT,
         max_attempts INTEGER,
         is_visible BOOLEAN DEFAULT true,
         author VARCHAR(255),
@@ -102,7 +103,10 @@ async function initDatabase() {
         challenge_id INTEGER REFERENCES challenges(id) ON DELETE CASCADE,
         filename VARCHAR(255) NOT NULL,
         file_url VARCHAR(500) NOT NULL,
+        storage_key VARCHAR(500),
+        content_type VARCHAR(255),
         file_size INTEGER,
+        uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )`,
       'challenge_attachments table'
@@ -196,6 +200,17 @@ async function initDatabase() {
       'challenge columns'
     );
     await executeWithRetry(
+      () => sql`ALTER TABLE challenges ADD COLUMN IF NOT EXISTS additional_flags TEXT`,
+      'alternative flags column'
+    );
+    await executeWithRetry(
+      () => sql`ALTER TABLE challenge_attachments
+        ADD COLUMN IF NOT EXISTS storage_key VARCHAR(500),
+        ADD COLUMN IF NOT EXISTS content_type VARCHAR(255),
+        ADD COLUMN IF NOT EXISTS uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`,
+      'attachment storage columns'
+    );
+    await executeWithRetry(
       () => sql`ALTER TABLE hints
         ADD COLUMN IF NOT EXISTS cost INTEGER DEFAULT 0,
         ADD COLUMN IF NOT EXISTS display_order INTEGER DEFAULT 0`,
@@ -253,12 +268,6 @@ async function initDatabase() {
           AND h.team_name IS DISTINCT FROM a.team_name`,
       'hint unlock team identity backfill'
     );
-    await executeWithRetry(
-      () => sql`DELETE FROM competition_config
-        WHERE key IN ('competition_start', 'competition_end')`,
-      'remove competition schedule settings'
-    );
-
     console.log('\n🔄 Creating indexes...\n');
 
     // Create indexes

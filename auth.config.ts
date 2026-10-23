@@ -46,7 +46,7 @@ export const authConfig = {
     },
     session({ session, token }) {
       session.user.id = token.id as string;
-      session.user.accountType = token.accountType as 'admin' | 'team';
+      session.user.accountType = token.accountType as 'admin' | 'team' | 'participant';
       session.user.teamName = typeof token.teamName === 'string' ? token.teamName : null;
       return session;
     },

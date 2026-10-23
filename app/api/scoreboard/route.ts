@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { executeWithRetry } from '@/lib/db/neon-client';
-import { accounts, solves } from '@/lib/db/schema';
+import { teams, solves } from '@/lib/db/schema';
 import { eq, sql, desc } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
@@ -13,25 +13,24 @@ export async function GET() {
     const rankings = await executeWithRetry(
       () => db
         .select({
-          id: accounts.id,
-          teamName: accounts.teamName,
-          username: accounts.username,
-          score: accounts.score,
+          id: teams.id,
+          teamName: teams.name,
+          username: teams.name,
+          score: teams.score,
           lastSolveTime: sql<Date | null>`(
             SELECT MAX(${solves.solvedAt})
             FROM ${solves}
-            WHERE ${solves.accountId} = ${accounts.id}
+            WHERE ${solves.teamId} = ${teams.id}
           )`.as('last_solve_time'),
           solveCount: sql<number>`(
             SELECT COUNT(*)::int
             FROM ${solves}
-            WHERE ${solves.accountId} = ${accounts.id}
+            WHERE ${solves.teamId} = ${teams.id}
           )`.as('solve_count'),
         })
-        .from(accounts)
-        .where(eq(accounts.accountType, 'team'))
+        .from(teams)
         .orderBy(
-          desc(accounts.score),
+          desc(teams.score),
           sql`last_solve_time ASC NULLS LAST`
         ),
       5,

@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { db } from '@/lib/db';
-import { executeWithRetry } from '@/lib/db/neon-client';
+import { executeWithRetry, sql as neonSql } from '@/lib/db/neon-client';
 import { challenges, categories, solves } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { Suspense } from 'react';
@@ -13,7 +13,7 @@ export const revalidate = 0;
 async function ChallengesContent() {
   const session = await auth();
   
-  if (!session || session.user.accountType !== 'team') {
+  if (!session || !['team', 'participant'].includes(session.user.accountType || '')) {
     redirect('/participantauth');
   }
 
@@ -38,14 +38,10 @@ async function ChallengesContent() {
   );
 
   const accountId = parseInt(session.user.id);
-  const solvedChallenges = await executeWithRetry(
-    () => db
-      .select({ challengeId: solves.challengeId })
-      .from(solves)
-      .where(eq(solves.accountId, accountId)),
-    5,
-    300,
-  );
+  const solvedChallenges = await executeWithRetry(() => neonSql`
+    SELECT s.challenge_id AS "challengeId" FROM solves s JOIN team_members m ON m.team_id = s.team_id WHERE m.account_id = ${accountId}
+    UNION SELECT s.challenge_id AS "challengeId" FROM solves s JOIN accounts a ON a.team_name = s.team_name WHERE a.id = ${accountId} AND a.account_type = 'team'
+  `, 5, 300);
 
   const solvedIds = solvedChallenges.map(s => s.challengeId ?? 0).filter(id => id > 0);
 

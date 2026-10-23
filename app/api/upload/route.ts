@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { uploadFromFormData } from '@/lib/storage/neon-storage';
+import { sameOrigin } from '@/lib/api/security';
 
 export async function POST(request: NextRequest) {
   try {
+    if (!sameOrigin(request)) return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 });
     const session = await auth();
 
     if (!session || session.user.accountType !== 'admin') {
@@ -19,12 +21,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      fileUrl: result.fileUrl,
-      fileName: result.fileName,
+      storageKey: result.storageKey,
+      filename: result.originalFilename,
       fileSize: result.fileSize,
+      contentType: result.contentType,
     });
-  } catch (error: any) {
-    console.error('Upload error:', error);
+  } catch (error: unknown) {
+    console.error('Upload error:', error instanceof Error ? error.message : 'unknown error');
     return NextResponse.json(
       { error: 'Failed to upload file' },
       { status: 500 }

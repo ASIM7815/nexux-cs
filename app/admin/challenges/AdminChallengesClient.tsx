@@ -40,8 +40,8 @@ interface FormData {
   is_visible: boolean;
   max_attempts: number | null;
   hints: Hint[];
-  file?: File | null;
-  fileUrl?: string;
+  files: File[];
+  replaceAttachments: boolean;
 }
 
 export default function AdminChallengesClient() {
@@ -56,6 +56,7 @@ export default function AdminChallengesClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const [formData, setFormData] = useState<FormData>({
     title: '',
@@ -67,8 +68,8 @@ export default function AdminChallengesClient() {
     is_visible: true,
     max_attempts: null,
     hints: [],
-    file: null,
-    fileUrl: '',
+    files: [],
+    replaceAttachments: false,
   });
 
   useEffect(() => {
@@ -83,7 +84,7 @@ export default function AdminChallengesClient() {
     const interval = setInterval(() => {
       fetchChallenges();
     }, 10000); // 10 seconds
-    
+
     return () => clearInterval(interval);
   }, []);
   */
@@ -142,8 +143,8 @@ export default function AdminChallengesClient() {
       is_visible: true,
       max_attempts: null,
       hints: [],
-      file: null,
-      fileUrl: '',
+      files: [],
+      replaceAttachments: false,
     });
     setShowModal(true);
     setError('');
@@ -162,8 +163,8 @@ export default function AdminChallengesClient() {
       is_visible: challenge.is_visible,
       max_attempts: challenge.max_attempts,
       hints: challenge.hints || [],
-      file: null,
-      fileUrl: challenge.attachments?.[0]?.file_url || '', // Pre-fill with existing file URL
+      files: [],
+      replaceAttachments: false,
     });
     setShowModal(true);
     setError('');
@@ -181,39 +182,48 @@ export default function AdminChallengesClient() {
     e.preventDefault();
     setError('');
     setSuccess('');
+    setUploadProgress(0);
 
     try {
-      let fileUrl = formData.fileUrl;
-      
-      // Upload file if provided
-      if (formData.file) {
+      const uploadedAttachments: Array<{ storageKey: string; filename: string; fileSize: number; contentType: string }> = [];
+
+      // Upload file if provided with progress tracking
+      if (formData.files.length > 0) {
         setLoading(true);
-        const uploadFormData = new FormData();
-        uploadFormData.append('file', formData.file);
-        
-        const uploadResponse = await fetch('/api/upload', {
-          method: 'POST',
-          body: uploadFormData,
-        });
-        
-        const uploadData = await uploadResponse.json();
-        
-        if (!uploadResponse.ok) {
-          throw new Error(uploadData.error || 'Failed to upload file');
+        setUploadProgress(10);
+
+        for (let index = 0; index < formData.files.length; index += 1) {
+          const uploadFormData = new FormData();
+          uploadFormData.append('file', formData.files[index]);
+          const uploadResponse = await fetch('/api/upload', { method: 'POST', body: uploadFormData });
+          const uploadData = await uploadResponse.json().catch(() => ({}));
+          if (!uploadResponse.ok || !uploadData.storageKey) {
+            throw new Error(uploadData.error || 'Failed to upload file');
+          }
+          uploadedAttachments.push({
+            storageKey: uploadData.storageKey,
+            filename: uploadData.filename,
+            fileSize: uploadData.fileSize,
+            contentType: uploadData.contentType,
+          });
+          setUploadProgress(10 + Math.round(((index + 1) / formData.files.length) * 80));
         }
-        
-        fileUrl = uploadData.fileUrl;
-        setLoading(false);
       }
 
+      setLoading(true);
       const url = editingChallenge
         ? '/api/admin/challenges/update'
         : '/api/admin/challenges/create';
 
       const payload = {
         ...formData,
-        fileUrl,
-        file: undefined, // Remove File object from payload
+        files: undefined,
+        // New challenges always receive the (possibly empty) attachment set.
+        // Existing challenges retain their set until the admin explicitly
+        // chooses replacement/removal.
+        attachments: editingChallenge
+          ? (formData.replaceAttachments ? uploadedAttachments : undefined)
+          : uploadedAttachments,
         ...(editingChallenge && { id: editingChallenge.id }),
       };
 
@@ -230,13 +240,21 @@ export default function AdminChallengesClient() {
         throw new Error(data.error || 'Failed to save challenge');
       }
 
+      setUploadProgress(100);
       setSuccess(editingChallenge ? 'Challenge updated successfully!' : 'Challenge created successfully!');
+      setLoading(false);
+
       setTimeout(() => {
+        setUploadProgress(0);
         closeModal();
         fetchChallenges();
       }, 1500);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to save challenge');
+      setLoading(false);
+      setUploadProgress(0);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save challenge';
+      setError(errorMessage);
+      console.error('Challenge save error:', err);
     }
   };
 
@@ -558,10 +576,10 @@ export default function AdminChallengesClient() {
               {/* File Upload Section */}
               <div className={styles.formGroup}>
                 <label className={styles.label}>Challenge File (Optional)</label>
-                {editingChallenge && formData.fileUrl && !formData.file && (
+                {editingChallenge && (editingChallenge.attachments?.length ?? 0) > 0 && !formData.replaceAttachments && (
                   <div style={{ marginBottom: '0.5rem', padding: '0.5rem', background: 'rgba(81, 207, 102, 0.1)', borderRadius: '6px' }}>
                     <p style={{ fontSize: '0.9rem', color: '#51cf66', margin: 0 }}>
-                      📎 Current file: {formData.fileUrl.split('/').pop()}
+                      📎 Current file{editingChallenge.attachments!.length > 1 ? 's' : ''}: {editingChallenge.attachments!.map(file => file.filename).join(', ')}
                     </p>
                     <p style={{ fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.6)', marginTop: '0.25rem', marginBottom: 0 }}>
                       Upload a new file to replace it, or leave empty to keep the current file
@@ -572,29 +590,34 @@ export default function AdminChallengesClient() {
                   type="file"
                   id="challengeFile"
                   onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      // Validate size (max 50MB)
-                      if (file.size > 50 * 1024 * 1024) {
+                    const files = Array.from(e.target.files || []);
+                    if (files.length > 0) {
+                      if (files.length > 10 || files.some(file => file.size > 50 * 1024 * 1024)) {
                         setError('File too large (max 50MB)');
                         return;
                       }
-                      setFormData({ ...formData, file });
+                      setFormData({ ...formData, files, replaceAttachments: Boolean(editingChallenge) });
                       setError('');
                     }
                   }}
                   className={styles.input}
-                  accept=".pdf,.zip,.txt,.jpg,.png,.gif,.mp4,.rar"
+                  accept=".pdf,.zip,.txt,.jpg,.png,.gif,.mp4,.rar,.7z,.c,.cpp,.py,.js,.java,.go,.rs,.bin"
+                  multiple
                 />
-                {formData.file && (
+                {formData.files.length > 0 && (
                   <p style={{ fontSize: '0.9rem', color: '#51cf66', marginTop: '0.5rem' }}>
-                    ✓ {formData.file.name} ({(formData.file.size / 1024).toFixed(2)} KB)
+                    ✓ {formData.files.map(file => `${file.name} (${(file.size / 1024).toFixed(2)} KB)`).join(', ')}
                   </p>
                 )}
-                {!formData.file && !editingChallenge && (
+                {!formData.files.length && !editingChallenge && (
                   <p style={{ fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.6)', marginTop: '0.25rem' }}>
                     Upload PDF, ZIP, images, videos, or text files (max 50MB)
                   </p>
+                )}
+                {editingChallenge && (editingChallenge.attachments?.length ?? 0) > 0 && !formData.replaceAttachments && (
+                  <button type="button" className={styles.removeFlagButton} onClick={() => setFormData({ ...formData, replaceAttachments: true, files: [] })}>
+                    Remove all current files
+                  </button>
                 )}
               </div>
 
@@ -648,12 +671,63 @@ export default function AdminChallengesClient() {
               {error && <div className={styles.error}>{error}</div>}
               {success && <div className={styles.success}>{success}</div>}
 
+              {/* Upload Progress Bar */}
+              {uploadProgress > 0 && uploadProgress < 100 && (
+                <div style={{ marginBottom: '1rem' }}>
+                  <div style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    height: '30px',
+                    position: 'relative'
+                  }}>
+                    <div style={{
+                      background: 'linear-gradient(90deg, #51cf66, #37b24d)',
+                      width: `${uploadProgress}%`,
+                      height: '100%',
+                      transition: 'width 0.3s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <span style={{
+                        color: 'white',
+                        fontWeight: 'bold',
+                        fontSize: '0.9rem',
+                        position: 'absolute',
+                        left: '50%',
+                        transform: 'translateX(-50%)'
+                      }}>
+                        {uploadProgress}% {uploadProgress < 30 ? 'Preparing...' : uploadProgress < 70 ? 'Uploading...' : uploadProgress < 100 ? 'Saving...' : 'Complete!'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className={styles.modalActions}>
-                <button type="button" onClick={closeModal} className={styles.cancelButton}>
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className={styles.cancelButton}
+                  disabled={loading}
+                >
                   Cancel
                 </button>
-                <button type="submit" className={styles.submitButton}>
-                  {editingChallenge ? 'Update Challenge' : 'Create Challenge'}
+                <button
+                  type="submit"
+                  className={styles.submitButton}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <span>
+                      {uploadProgress > 0 && uploadProgress < 100 ? `Uploading ${uploadProgress}%...` :
+                       uploadProgress === 100 ? 'Saving...' :
+                       'Processing...'}
+                    </span>
+                  ) : (
+                    editingChallenge ? 'Update Challenge' : 'Create Challenge'
+                  )}
                 </button>
               </div>
             </form>

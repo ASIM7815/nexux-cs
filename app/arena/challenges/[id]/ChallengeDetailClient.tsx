@@ -211,9 +211,7 @@ export default function ChallengeDetailClient({
                 {attachments.map(att => (
                   <a
                     key={att.id}
-                    href={att.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={`/api/challenges/attachments/${att.id}`}
                     className={styles.attachment}
                   >
                     📄 {att.filename}

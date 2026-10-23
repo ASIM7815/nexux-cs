@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
-import { executeWithRetry } from '@/lib/db/neon-client';
+import { executeWithRetry, sql as neonSql } from '@/lib/db/neon-client';
 import { challenges, categories, solves } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 
@@ -12,7 +12,7 @@ export async function GET() {
   try {
     const session = await auth();
     
-    if (!session || session.user.accountType !== 'team') {
+    if (!session || !['team', 'participant'].includes(session.user.accountType || '')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -40,14 +40,10 @@ export async function GET() {
     );
 
     // Fetch solved challenge IDs for this team
-    const solved = await executeWithRetry(
-      () => db
-        .select({ challengeId: solves.challengeId })
-        .from(solves)
-        .where(eq(solves.accountId, accountId)),
-      5,
-      300,
-    );
+    const solved = await executeWithRetry(() => neonSql`
+      SELECT s.challenge_id AS "challengeId" FROM solves s JOIN team_members m ON m.team_id = s.team_id WHERE m.account_id = ${accountId}
+      UNION SELECT s.challenge_id AS "challengeId" FROM solves s JOIN accounts a ON a.team_name = s.team_name WHERE a.id = ${accountId} AND a.account_type = 'team'
+    `, 5, 300);
 
     const solvedIds = solved.map(s => s.challengeId ?? 0).filter(id => id > 0);
 

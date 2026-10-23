@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { db } from '@/lib/db';
-import { executeWithRetry } from '@/lib/db/neon-client';
+import { executeWithRetry, sql as neonSql } from '@/lib/db/neon-client';
 import { challenges, categories, solves, submissions, hints, hintUnlocks, challengeAttachments } from '@/lib/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import ChallengeDetailClient from './ChallengeDetailClient';
@@ -12,7 +12,7 @@ export const revalidate = 0;
 export default async function ChallengeDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   
-  if (!session || session.user.accountType !== 'team') {
+  if (!session || !['team', 'participant'].includes(session.user.accountType || '')) {
     redirect('/participantauth');
   }
 
@@ -48,33 +48,22 @@ export default async function ChallengeDetailPage({ params }: { params: Promise<
   const challenge = challengeData[0];
 
   // Check if already solved
-  const solveData = await executeWithRetry(
-    () => db
-      .select()
-      .from(solves)
-      .where(and(eq(solves.challengeId, challengeId), eq(solves.accountId, accountId)))
-      .limit(1),
-    5,
-    300,
-  );
+  const solveData = await executeWithRetry(() => neonSql`
+    SELECT s.id FROM solves s JOIN team_members m ON m.team_id = s.team_id
+    WHERE s.challenge_id = ${challengeId} AND m.account_id = ${accountId}
+    UNION SELECT s.id FROM solves s JOIN accounts a ON a.team_name = s.team_name
+    WHERE s.challenge_id = ${challengeId} AND a.id = ${accountId} AND a.account_type = 'team' LIMIT 1
+  `, 5, 300);
 
   const isSolved = solveData.length > 0;
 
   // Get submission history for this challenge
-  const submissionHistory = await executeWithRetry(
-    () => db
-      .select({
-        id: submissions.id,
-        isCorrect: submissions.isCorrect,
-        submittedAt: submissions.submittedAt,
-      })
-      .from(submissions)
-      .where(and(eq(submissions.challengeId, challengeId), eq(submissions.accountId, accountId)))
-      .orderBy(desc(submissions.submittedAt))
-      .limit(10),
-    5,
-    300,
-  );
+  const submissionHistory = await executeWithRetry(() => neonSql`
+    SELECT s.id, s.is_correct AS "isCorrect", s.submitted_at AS "submittedAt" FROM submissions s
+    WHERE s.challenge_id = ${challengeId} AND (s.team_id IN (SELECT team_id FROM team_members WHERE account_id = ${accountId})
+      OR s.team_name = (SELECT team_name FROM accounts WHERE id = ${accountId} AND account_type = 'team'))
+    ORDER BY s.submitted_at DESC LIMIT 10
+  `, 5, 300);
 
   const attemptCount = submissionHistory.length;
 
@@ -101,14 +90,11 @@ export default async function ChallengeDetailPage({ params }: { params: Promise<
   }));
 
   // Get unlocked hints
-  const unlockedHints = await executeWithRetry(
-    () => db
-      .select({ hintId: hintUnlocks.hintId })
-      .from(hintUnlocks)
-      .where(eq(hintUnlocks.accountId, accountId)),
-    5,
-    300,
-  );
+  const unlockedHints = await executeWithRetry(() => neonSql`
+    SELECT h.hint_id AS "hintId" FROM hint_unlocks h
+    WHERE h.team_id IN (SELECT team_id FROM team_members WHERE account_id = ${accountId})
+      OR h.team_name = (SELECT team_name FROM accounts WHERE id = ${accountId} AND account_type = 'team')
+  `, 5, 300);
 
   const unlockedHintIds = unlockedHints.map(h => h.hintId ?? 0).filter(id => id > 0);
 
@@ -128,7 +114,11 @@ export default async function ChallengeDetailPage({ params }: { params: Promise<
       isSolved={isSolved}
       attemptCount={attemptCount}
       maxAttempts={challenge.maxAttempts}
-      submissionHistory={submissionHistory}
+      submissionHistory={submissionHistory.map((submission) => ({
+        id: Number(submission.id),
+        isCorrect: Boolean(submission.isCorrect),
+        submittedAt: submission.submittedAt ? new Date(String(submission.submittedAt)) : null,
+      }))}
       hints={hintsWithCost}
       unlockedHintIds={unlockedHintIds}
       attachments={attachments}
