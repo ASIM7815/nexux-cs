@@ -2,6 +2,7 @@
 
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import styles from './AdminDashboard.module.css';
 
 interface Session {
@@ -79,9 +80,9 @@ export default function AdminDashboardClient({ session }: Props) {
             <p className={styles.actionDescription}>
               Monitor team progress and competition rankings in real-time.
             </p>
-            <button className={styles.actionButton} onClick={() => router.push('/arena/scoreboard')}>
+            <Link href="/arena/scoreboard" className={styles.actionButton}>
               View Leaderboard
-            </button>
+            </Link>
           </div>
 
           <div className={styles.actionCard}>

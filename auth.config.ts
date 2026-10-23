@@ -17,8 +17,8 @@ export const authConfig = {
         if (!isLoggedIn) {
           return false; // Redirect to participantauth
         }
-        // Check if user is a team (not admin accessing arena)
-        if (auth.user.accountType === 'admin') {
+        // Allow admins to view scoreboard, but not other arena pages
+        if (auth.user.accountType === 'admin' && nextUrl.pathname !== '/arena/scoreboard') {
           return Response.redirect(new URL('/admin/dashboard', nextUrl));
         }
       }
