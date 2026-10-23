@@ -79,7 +79,7 @@ export default function AdminDashboardClient({ session }: Props) {
             <p className={styles.actionDescription}>
               Monitor team progress and competition rankings in real-time.
             </p>
-            <button className={styles.actionButton} onClick={() => window.open('/arena/scoreboard', '_blank')}>
+            <button className={styles.actionButton} onClick={() => router.push('/arena/scoreboard')}>
               View Leaderboard
             </button>
           </div>

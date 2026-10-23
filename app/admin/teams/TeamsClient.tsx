@@ -196,7 +196,7 @@ export default function TeamsClient({ teams: initialTeams, session }: Props) {
             <button className={styles.navLink} onClick={() => router.push('/admin/challenges')}>
               Challenges
             </button>
-            <button className={styles.navLink} onClick={() => window.open('/arena/scoreboard', '_blank')}>
+            <button className={styles.navLink} onClick={() => router.push('/arena/scoreboard')}>
               Leaderboard
             </button>
           </nav>
