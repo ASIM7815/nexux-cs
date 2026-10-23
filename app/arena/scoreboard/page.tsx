@@ -2,7 +2,7 @@ import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { db } from '@/lib/db';
 import { executeWithRetry } from '@/lib/db/neon-client';
-import { teams, solves } from '@/lib/db/schema';
+import { accounts, solves } from '@/lib/db/schema';
 import { eq, desc, sql } from 'drizzle-orm';
 import { Suspense } from 'react';
 import ScoreboardClient from './ScoreboardClient';
@@ -20,19 +20,20 @@ async function ScoreboardContent() {
   const rankings = await executeWithRetry(
     () => db
       .select({
-        id: teams.id,
-        teamName: teams.name,
-        username: teams.name,
-        score: teams.score,
-        lastSolveTime: teams.lastSolveTime,
+        id: accounts.id,
+        teamName: accounts.teamName,
+        username: accounts.username,
+        score: accounts.score,
+        lastSolveTime: accounts.lastSolveTime,
         solveCount: sql<number>`count(${solves.id})`,
       })
-      .from(teams)
-      .leftJoin(solves, eq(teams.id, solves.teamId))
-      .groupBy(teams.id)
+      .from(accounts)
+      .leftJoin(solves, eq(accounts.id, solves.accountId))
+      .where(eq(accounts.accountType, 'team'))
+      .groupBy(accounts.id)
       .orderBy(
-        desc(teams.score),
-        sql`COALESCE(${teams.lastSolveTime}, ${teams.createdAt}) ASC`
+        desc(accounts.score),
+        sql`COALESCE(${accounts.lastSolveTime}, ${accounts.createdAt}) ASC`
       ),
     5,
     300,
