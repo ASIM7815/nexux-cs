@@ -13,8 +13,8 @@ const challengeSchema = z.object({
   description: z.string().trim().min(1).max(50_000),
   category_id: z.coerce.number().int().positive(),
   points: z.coerce.number().int().min(0).max(1_000_000),
-  flag: z.string().trim().min(1).max(500),
-  additionalFlags: z.array(z.string().trim()).optional().default([]), // NEW: Array of additional flags
+  flag: z.string().trim().min(1).max(500), // MANDATORY on create
+  additionalFlags: z.array(z.string().trim()).optional().default([]), // Array of additional flags
   is_visible: z.boolean().default(false),
   max_attempts: z.union([z.coerce.number().int().positive().max(1_000_000), z.null()]).default(null),
   hints: z.array(hintSchema).max(50).default([]),

@@ -20,6 +20,8 @@ const challengeSchema = z.object({
   is_visible: z.boolean().default(false),
   max_attempts: z.union([z.coerce.number().int().positive().max(1_000_000), z.null()]).default(null),
   hints: z.array(hintSchema).max(50).default([]),
+  additionalFlags: z.array(z.string().trim()).optional().default([]), // Array of additional flags
+  fileUrl: z.string().url().optional().or(z.literal('')), // Support file updates
 });
 
 export async function POST(request: Request) {
@@ -46,10 +48,30 @@ export async function POST(request: Request) {
             category_id = ${data.category_id},
             points = ${data.points},
             flag = CASE WHEN COALESCE(${data.flag ?? ''}, '') = '' THEN flag ELSE ${data.flag ?? ''} END,
+            additional_flags = CASE 
+              WHEN ${data.additionalFlags && data.additionalFlags.length > 0 ? JSON.stringify(data.additionalFlags) : null} IS NOT NULL 
+              THEN ${data.additionalFlags && data.additionalFlags.length > 0 ? JSON.stringify(data.additionalFlags) : null}
+              ELSE additional_flags 
+            END,
             is_visible = ${data.is_visible},
             max_attempts = ${data.max_attempts},
             updated_at = NOW()
         WHERE id = ${data.id} AND EXISTS (SELECT 1 FROM category)
+        RETURNING id
+      ),
+      removed_file AS (
+        DELETE FROM challenge_attachments 
+        WHERE challenge_id IN (SELECT id FROM updated) AND ${data.fileUrl || ''} != ''
+        RETURNING id
+      ),
+      added_file AS (
+        INSERT INTO challenge_attachments (challenge_id, filename, file_url, file_size)
+        SELECT u.id, 
+               CASE WHEN ${data.fileUrl || ''} != '' THEN split_part(${data.fileUrl || ''}, '/', -1) ELSE 'file' END,
+               ${data.fileUrl || ''},
+               0
+        FROM updated u
+        WHERE ${data.fileUrl || ''} != ''
         RETURNING id
       ),
       removed_hints AS (
@@ -67,7 +89,7 @@ export async function POST(request: Request) {
       audit AS (
         INSERT INTO audit_logs (account_id, action, entity_type, entity_id, details)
         SELECT ${Number(session.user.id)}, 'update', 'challenge', id,
-          ${JSON.stringify({ title: data.title, points: data.points })}::jsonb
+          ${JSON.stringify({ title: data.title, points: data.points, hasFileUpdate: !!(data.fileUrl) })}::jsonb
         FROM updated
         RETURNING entity_id
       )

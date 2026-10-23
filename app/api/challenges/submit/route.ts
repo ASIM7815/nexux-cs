@@ -43,14 +43,15 @@ export async function POST(request: NextRequest) {
         FROM challenges
         WHERE id = ${challengeId} AND is_visible = true
       ),
-      participant AS MATERIALIZED (
-          SELECT id, team_name FROM accounts
+      team_info AS MATERIALIZED (
+        SELECT id, team_name FROM accounts
         WHERE id = ${accountId} AND account_type = 'team'
         FOR UPDATE
       ),
       existing_solve AS MATERIALIZED (
-        SELECT 1 AS present FROM solves
-        WHERE challenge_id = ${challengeId} AND account_id = ${accountId}
+        SELECT 1 AS present FROM solves s
+        INNER JOIN team_info t ON s.team_name = t.team_name
+        WHERE s.challenge_id = ${challengeId}
         LIMIT 1
       ),
       attempt_state AS MATERIALIZED (
@@ -70,7 +71,7 @@ export async function POST(request: NextRequest) {
       ),
       eligible AS MATERIALIZED (
         SELECT c.id, c.flag, c.additional_flags, c.points, p.team_name
-        FROM challenge c, participant p, attempt_state a, rate_state r, competition_state cs
+        FROM challenge c, team_info p, attempt_state a, rate_state r, competition_state cs
         WHERE NOT EXISTS (SELECT 1 FROM existing_solve)
           AND (c.max_attempts IS NULL OR a.count < c.max_attempts)
           AND r.attempt_count < ${MAX_SUBMISSIONS_PER_MINUTE}
@@ -105,7 +106,7 @@ export async function POST(request: NextRequest) {
       SELECT
         EXISTS (SELECT 1 FROM challenges WHERE id = ${challengeId}) AS challenge_exists,
         EXISTS (SELECT 1 FROM challenge) AS challenge_visible,
-        EXISTS (SELECT 1 FROM participant) AS participant_exists,
+        EXISTS (SELECT 1 FROM team_info) AS participant_exists,
         EXISTS (SELECT 1 FROM existing_solve) AS already_solved,
         EXISTS (
           SELECT 1 FROM challenge c, attempt_state a
