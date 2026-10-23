@@ -1,0 +1,415 @@
+/* ============================================
+   Categories Component Styles
+   CTF Competition Tracks
+   ============================================ */
+
+.categoriesSection {
+  position: relative;
+  padding: var(--spacing-xl) var(--spacing-md);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-content);
+}
+
+.container {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ============================================
+   Section Header
+   ============================================ */
+.sectionHeader {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.sectionTitle {
+  font-family: var(--font-primary);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  background: var(--gradient-neon);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: var(--spacing-sm);
+}
+
+.sectionSubtitle {
+  font-family: var(--font-secondary);
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-weight: 400;
+  color: var(--color-secondary-light);
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+.titleUnderline {
+  width: 200px;
+  height: 3px;
+  margin: var(--spacing-md) auto 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-primary) 25%,
+    var(--color-secondary) 75%,
+    transparent 100%
+  );
+  box-shadow: 0 0 15px var(--color-primary-glow);
+  animation: underlineExpand 2s ease-in-out infinite;
+}
+
+/* ============================================
+   Cards Grid
+   ============================================ */
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--spacing-lg);
+  perspective: 1000px;
+}
+
+/* ============================================
+   Category Card
+   ============================================ */
+.categoryCard {
+  position: relative;
+  min-height: 400px;
+  background: rgba(10, 14, 39, 0.6);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.categoryCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 12px;
+  padding: 2px;
+  background: linear-gradient(135deg, transparent 0%, currentColor 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.5;
+  transition: opacity var(--transition-normal);
+}
+
+.categoryCard:hover::before {
+  opacity: 1;
+}
+
+/* Color variations */
+.categoryCard.primary {
+  color: var(--color-primary);
+  border: 2px solid rgba(255, 0, 153, 0.3);
+}
+
+.categoryCard.secondary {
+  color: var(--color-secondary);
+  border: 2px solid rgba(0, 217, 255, 0.3);
+}
+
+.categoryCard.accent {
+  color: var(--color-accent);
+  border: 2px solid rgba(157, 0, 255, 0.3);
+}
+
+.categoryCard:hover {
+  box-shadow: 
+    0 0 40px currentColor,
+    0 0 80px rgba(0, 0, 0, 0.5),
+    inset 0 0 40px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================
+   Card Inner Content
+   ============================================ */
+.cardInner {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg) var(--spacing-md);
+  z-index: 1;
+}
+
+/* ============================================
+   Icon
+   ============================================ */
+.iconWrapper {
+  width: 120px;
+  height: 120px;
+  margin-bottom: var(--spacing-md);
+  color: currentColor;
+  filter: drop-shadow(0 0 20px currentColor);
+  transition: all var(--transition-normal);
+}
+
+.svgIcon {
+  width: 100%;
+  height: 100%;
+  color: currentColor;
+}
+
+.categoryCard:hover .iconWrapper {
+  filter: drop-shadow(0 0 30px currentColor)
+          drop-shadow(0 0 50px currentColor);
+}
+
+/* ============================================
+   Title
+   ============================================ */
+.categoryTitle {
+  font-family: var(--font-primary);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: currentColor;
+  text-shadow: 0 0 15px currentColor;
+  margin-bottom: var(--spacing-sm);
+  text-align: center;
+}
+
+/* ============================================
+   Description
+   ============================================ */
+.categoryDescription {
+  font-family: var(--font-secondary);
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--color-secondary-light);
+  text-align: center;
+  opacity: 0.9;
+}
+
+/* ============================================
+   Card Corners
+   ============================================ */
+.cardCorners {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.corner1,
+.corner2,
+.corner3,
+.corner4 {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-color: transparent;
+  transition: all var(--transition-normal);
+}
+
+.corner1 {
+  top: 0;
+  left: 0;
+  border-width: 30px 30px 0 0;
+  border-top-color: currentColor;
+  opacity: 0.3;
+}
+
+.corner2 {
+  top: 0;
+  right: 0;
+  border-width: 0 30px 30px 0;
+  border-right-color: currentColor;
+  opacity: 0.3;
+}
+
+.corner3 {
+  bottom: 0;
+  left: 0;
+  border-width: 30px 0 0 30px;
+  border-left-color: currentColor;
+  opacity: 0.3;
+}
+
+.corner4 {
+  bottom: 0;
+  right: 0;
+  border-width: 0 0 30px 30px;
+  border-bottom-color: currentColor;
+  opacity: 0.3;
+}
+
+.categoryCard:hover .corner1,
+.categoryCard:hover .corner2,
+.categoryCard:hover .corner3,
+.categoryCard:hover .corner4 {
+  opacity: 0.7;
+}
+
+/* ============================================
+   Hover Glow Effect
+   ============================================ */
+.hoverGlow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+  background: radial-gradient(
+    circle,
+    currentColor 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  opacity: 0;
+  transition: all var(--transition-slow);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.categoryCard:hover .hoverGlow {
+  width: 400px;
+  height: 400px;
+  opacity: 0.15;
+}
+
+/* ============================================
+   Keyframe Animations
+   ============================================ */
+@keyframes underlineExpand {
+  0%, 100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scaleX(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 1024px) {
+  .cardsGrid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+}
+
+@media (max-width: 768px) {
+  .categoriesSection {
+    padding: var(--spacing-lg) var(--spacing-sm);
+    min-height: auto;
+  }
+
+  .sectionHeader {
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .sectionTitle {
+    font-size: 2rem;
+  }
+
+  .sectionSubtitle {
+    font-size: 1rem;
+  }
+
+  .titleUnderline {
+    width: 150px;
+  }
+
+  .cardsGrid {
+    gap: var(--spacing-sm);
+  }
+
+  .categoryCard {
+    min-height: 350px;
+  }
+
+  .cardInner {
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+
+  .iconWrapper {
+    width: 90px;
+    height: 90px;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .categoryTitle {
+    font-size: 1.25rem;
+  }
+
+  .categoryDescription {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+}
+
+@media (max-width: 480px) {
+  .categoriesSection {
+    padding: var(--spacing-md) var(--spacing-xs);
+  }
+
+  .categoryCard {
+    min-height: 320px;
+  }
+
+  .cardInner {
+    padding: var(--spacing-sm);
+  }
+
+  .iconWrapper {
+    width: 80px;
+    height: 80px;
+  }
+
+  .categoryTitle {
+    font-size: 1.125rem;
+    letter-spacing: 0.05em;
+  }
+
+  .categoryDescription {
+    font-size: 0.875rem;
+  }
+
+  .corner1,
+  .corner2,
+  .corner3,
+  .corner4 {
+    border-width: 20px;
+  }
+}
+
+/* ============================================
+   Reduced Motion
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .titleUnderline {
+    animation: none;
+  }
+
+  .categoryCard:hover {
+    transform: none;
+  }
+
+  .iconWrapper {
+    transition: none;
+  }
+}

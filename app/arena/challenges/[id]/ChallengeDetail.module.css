@@ -1,0 +1,518 @@
+.container {
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+}
+
+.header {
+  background: rgba(10, 10, 20, 0.95);
+  border-bottom: 2px solid rgba(255, 0, 153, 0.3);
+  padding: 20px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+}
+
+.headerContent {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+}
+
+.logoText {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #FF0099, #00D9FF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+.logoSubtext {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.nav {
+  display: flex;
+  gap: 8px;
+}
+
+.navLink {
+  background: transparent;
+  border: 1px solid rgba(255, 0, 153, 0.3);
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.navLink:hover {
+  border-color: #FF0099;
+  background: rgba(255, 0, 153, 0.1);
+  color: #fff;
+}
+
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.userName {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #00D9FF;
+  letter-spacing: 1px;
+}
+
+.logoutButton {
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ff6b6b;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.logoutButton:hover {
+  border-color: #ff0000;
+  background: rgba(255, 0, 0, 0.2);
+}
+
+.main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+.backButton {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 24px;
+}
+
+.backButton:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.challengeContainer {
+  background: rgba(10, 10, 20, 0.6);
+  border: 2px solid rgba(255, 0, 153, 0.3);
+  border-radius: 16px;
+  padding: 32px;
+}
+
+.challengeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 0, 153, 0.2);
+}
+
+.challengeTitle {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 32px;
+  font-weight: 900;
+  color: #fff;
+  margin: 0 0 16px;
+  letter-spacing: 2px;
+}
+
+.challengeMeta {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.category {
+  background: rgba(0, 217, 255, 0.1);
+  border: 1px solid rgba(0, 217, 255, 0.3);
+  color: #00D9FF;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.points {
+  background: linear-gradient(135deg, #FF0099, #9D00FF);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.author {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.solvedBadge {
+  background: linear-gradient(135deg, #00FF99, #00D9FF);
+  color: #000;
+  padding: 12px 24px;
+  border-radius: 20px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.sectionTitle {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #FF0099;
+  margin: 0 0 16px;
+  letter-spacing: 1px;
+}
+
+.descriptionSection {
+  margin-bottom: 32px;
+}
+
+.description {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.description code {
+  background: rgba(255, 0, 153, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  color: #FF0099;
+}
+
+.description pre {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  border: 1px solid rgba(255, 0, 153, 0.3);
+}
+
+.attachmentsSection {
+  margin-bottom: 32px;
+}
+
+.attachmentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.attachment {
+  background: rgba(0, 217, 255, 0.05);
+  border: 1px solid rgba(0, 217, 255, 0.3);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  color: #00D9FF;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.attachment:hover {
+  background: rgba(0, 217, 255, 0.1);
+  border-color: #00D9FF;
+}
+
+.fileSize {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+}
+
+.submitSection {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: rgba(255, 0, 153, 0.05);
+  border: 2px solid rgba(255, 0, 153, 0.3);
+  border-radius: 12px;
+}
+
+.submitForm {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.flagInput {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 0, 153, 0.3);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.flagInput:focus {
+  outline: none;
+  border-color: #FF0099;
+  box-shadow: 0 0 20px rgba(255, 0, 153, 0.3);
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.submitButton {
+  background: linear-gradient(135deg, #FF0099, #9D00FF);
+  border: none;
+  border-radius: 8px;
+  padding: 14px 32px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(255, 0, 153, 0.4);
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.attemptsInfo {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.message {
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+.message.success {
+  background: rgba(0, 255, 153, 0.1);
+  border: 1px solid rgba(0, 255, 153, 0.3);
+  color: #00FF99;
+}
+
+.message.error {
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  color: #ff6b6b;
+}
+
+.maxAttemptsReached {
+  padding: 16px;
+  background: rgba(255, 107, 0, 0.1);
+  border: 1px solid rgba(255, 107, 0, 0.3);
+  border-radius: 8px;
+  color: #ffb366;
+  font-family: 'Rajdhani', sans-serif;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.hintsSection {
+  margin-bottom: 32px;
+}
+
+.hintsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hint {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.hintHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.hintTitle {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #00D9FF;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.unlockButton {
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #FFD700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.unlockButton:hover:not(:disabled) {
+  background: rgba(255, 215, 0, 0.2);
+  border-color: #FFD700;
+}
+
+.unlockButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hintContent {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.hintLocked {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.historySection {
+  margin-top: 32px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255, 0, 153, 0.2);
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.historyItem {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 16px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  align-items: center;
+}
+
+.historyItem.correct {
+  background: rgba(0, 255, 153, 0.05);
+  border: 1px solid rgba(0, 255, 153, 0.3);
+}
+
+.historyItem.incorrect {
+  background: rgba(255, 0, 0, 0.05);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+}
+
+.historyFlag {
+  font-family: 'Courier New', monospace;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.historyStatus {
+  font-weight: 600;
+}
+
+.historyItem.correct .historyStatus {
+  color: #00FF99;
+}
+
+.historyItem.incorrect .historyStatus {
+  color: #ff6b6b;
+}
+
+.historyTime {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .challengeHeader {
+    flex-direction: column;
+  }
+
+  .submitForm {
+    flex-direction: column;
+  }
+
+  .historyItem {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}

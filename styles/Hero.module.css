@@ -1,0 +1,308 @@
+/* ============================================
+   Hero Component Styles
+   Full viewport hero section with logo
+   ============================================ */
+
+.heroSection {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md);
+  overflow: hidden;
+}
+
+.heroContent {
+  position: relative;
+  z-index: var(--z-content);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  max-width: 1400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* ============================================
+   Logo Container
+   ============================================ */
+.logoContainer {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  filter: drop-shadow(0 0 30px rgba(255, 0, 153, 0.4))
+          drop-shadow(0 0 50px rgba(0, 217, 255, 0.3));
+  transition: filter var(--transition-slow);
+}
+
+.logoContainer:hover {
+  filter: drop-shadow(0 0 40px rgba(255, 0, 153, 0.6))
+          drop-shadow(0 0 60px rgba(0, 217, 255, 0.5));
+}
+
+.logo {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* ============================================
+   Tagline
+   ============================================ */
+.tagline {
+  font-family: var(--font-secondary);
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  font-weight: 400;
+  color: var(--color-secondary-light);
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.6),
+               0 0 20px rgba(0, 217, 255, 0.4);
+  max-width: 800px;
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+  margin: var(--spacing-md) 0;
+  position: relative;
+}
+
+.bracket {
+  color: var(--color-primary);
+  font-size: 1.2em;
+  font-weight: 700;
+  text-shadow: 0 0 15px var(--color-primary-glow);
+  animation: flickerBracket 3s ease-in-out infinite;
+}
+
+/* ============================================
+   Decorative Lines
+   ============================================ */
+.decorativeLines {
+  position: absolute;
+  bottom: 20%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-xl);
+  padding: 0 var(--spacing-lg);
+  pointer-events: none;
+}
+
+.lineLeft,
+.lineRight {
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-primary) 50%,
+    var(--color-secondary) 100%
+  );
+  box-shadow: 0 0 10px var(--color-primary-glow);
+  position: relative;
+}
+
+.lineLeft {
+  flex: 1;
+  max-width: 300px;
+}
+
+.lineRight {
+  flex: 1;
+  max-width: 300px;
+  background: linear-gradient(
+    90deg,
+    var(--color-secondary) 0%,
+    var(--color-primary) 50%,
+    transparent 100%
+  );
+}
+
+.lineLeft::after,
+.lineRight::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: var(--color-primary);
+  box-shadow: 0 0 15px var(--color-primary-glow);
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.lineLeft::after {
+  right: 0;
+  animation: pulseDot 2s ease-in-out infinite;
+}
+
+.lineRight::after {
+  left: 0;
+  background: var(--color-secondary);
+  box-shadow: 0 0 15px var(--color-secondary-glow);
+  animation: pulseDot 2s ease-in-out infinite 0.5s;
+}
+
+/* ============================================
+   Scroll Indicator
+   ============================================ */
+.scrollIndicator {
+  position: absolute;
+  bottom: var(--spacing-md);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+  z-index: var(--z-content);
+}
+
+.scrollArrow {
+  font-size: 2rem;
+  color: var(--color-secondary);
+  text-shadow: 0 0 10px var(--color-secondary-glow);
+  font-weight: 700;
+}
+
+.scrollText {
+  font-family: var(--font-secondary);
+  font-size: 0.875rem;
+  color: var(--color-secondary-light);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  opacity: 0.8;
+}
+
+/* ============================================
+   Keyframe Animations
+   ============================================ */
+@keyframes flickerBracket {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  75% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    transform: translateY(-50%) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-50%) scale(1.3);
+    opacity: 0.7;
+  }
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 1200px) {
+  .logoContainer {
+    max-width: 900px;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroSection {
+    padding: var(--spacing-sm);
+    min-height: 100vh;
+  }
+
+  .heroContent {
+    gap: var(--spacing-sm);
+  }
+
+  .logoContainer {
+    max-width: 100%;
+    padding: 0 var(--spacing-sm);
+  }
+
+  .tagline {
+    font-size: 1rem;
+    padding: 0 var(--spacing-sm);
+    margin: var(--spacing-sm) 0;
+  }
+
+  .decorativeLines {
+    display: none;
+  }
+
+  .scrollIndicator {
+    bottom: var(--spacing-sm);
+  }
+
+  .scrollArrow {
+    font-size: 1.5rem;
+  }
+
+  .scrollText {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroSection {
+    padding: var(--spacing-xs);
+  }
+
+  .logoContainer {
+    padding: 0;
+  }
+
+  .tagline {
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  .bracket {
+    font-size: 1.1em;
+  }
+}
+
+/* ============================================
+   Landscape Mobile Fix
+   ============================================ */
+@media (max-height: 600px) and (orientation: landscape) {
+  .heroSection {
+    min-height: auto;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .logoContainer {
+    max-width: 600px;
+  }
+
+  .scrollIndicator {
+    display: none;
+  }
+}
+
+/* ============================================
+   Reduced Motion
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .logoContainer {
+    filter: drop-shadow(0 0 30px rgba(255, 0, 153, 0.4));
+  }
+
+  .bracket,
+  .lineLeft::after,
+  .lineRight::after {
+    animation: none;
+  }
+}

@@ -6,12 +6,39 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:init": "tsx scripts/init-db.ts",
+    "db:seed": "tsx lib/db/seed.ts",
+    "db:reset-admin": "tsx scripts/reset-admin-password.ts",
+    "db:check-admin": "tsx scripts/check-admin.ts",
+    "db:update-admin": "tsx scripts/update-admin.ts",
+    "db:delete-challenges": "tsx scripts/delete-demo-challenges.ts",
+    "db:verify": "tsx scripts/verify-database.ts",
+    "test:platform": "tsx scripts/test-platform.ts",
+    "test:login": "tsx scripts/test-admin-login.ts",
+    "admin": "echo '\n🔐 Admin Login:\n   URL: http://localhost:3000/admin\n   Username: ISL\n   Password: ISLcollege\n' && npm run dev"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1155.0",
+    "@aws-sdk/s3-request-presigner": "^3.1155.0",
+    "@neon/config": "^1.9.3",
+    "@neon/env": "^1.6.4",
+    "@neondatabase/serverless": "^1.2.0",
+    "@types/bcryptjs": "^2.4.6",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^18.0.8",
+    "drizzle-kit": "^0.31.11",
+    "drizzle-orm": "^0.45.4",
+    "framer-motion": "^14.2.0",
     "next": "16.4.1",
+    "next-auth": "^5.0.0-beta.32",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -19,6 +46,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.1",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

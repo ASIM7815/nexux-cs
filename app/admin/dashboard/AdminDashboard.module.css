@@ -1,0 +1,247 @@
+.container {
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+}
+
+.header {
+  background: rgba(10, 10, 20, 0.95);
+  border-bottom: 2px solid rgba(255, 0, 153, 0.3);
+  padding: 20px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+}
+
+.headerContent {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+}
+
+.logoText {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #FF0099, #00D9FF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+.logoSubtext {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.userName {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #FF0099;
+  letter-spacing: 1px;
+}
+
+.userType {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 1px;
+}
+
+.logoutButton {
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ff6b6b;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.logoutButton:hover {
+  border-color: #ff0000;
+  background: rgba(255, 0, 0, 0.2);
+}
+
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 48px 24px 64px;
+}
+
+.welcomeSection {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.welcomeTitle {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 48px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #FF0099, #9D00FF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 16px;
+  letter-spacing: 2px;
+}
+
+.welcomeText {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.quickActionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.actionCard {
+  background: rgba(10, 10, 20, 0.6);
+  border: 2px solid rgba(255, 0, 153, 0.3);
+  border-radius: 16px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.actionCard:hover {
+  border-color: #FF0099;
+  box-shadow: 0 10px 40px rgba(255, 0, 153, 0.3);
+  transform: translateY(-4px);
+}
+
+.actionIcon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.actionTitle {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 12px;
+  letter-spacing: 1px;
+}
+
+.actionDescription {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.6;
+  margin: 0 0 24px;
+  flex-grow: 1;
+}
+
+.actionButton {
+  background: linear-gradient(135deg, #FF0099, #9D00FF);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.actionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 0, 153, 0.4);
+}
+
+.infoBox {
+  background: rgba(0, 217, 255, 0.05);
+  border: 2px solid rgba(0, 217, 255, 0.3);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.infoIcon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.infoContent {
+  flex-grow: 1;
+}
+
+.infoTitle {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #00D9FF;
+  margin: 0 0 8px;
+  letter-spacing: 1px;
+}
+
+.infoText {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .welcomeTitle {
+    font-size: 36px;
+  }
+
+  .quickActionsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .infoBox {
+    flex-direction: column;
+    text-align: center;
+  }
+}

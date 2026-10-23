@@ -1,0 +1,213 @@
+/* ============================================
+   CTA Button Component Styles
+   Premium neon-styled button with animations
+   ============================================ */
+
+.ctaButton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: 1.2rem 3rem;
+  font-family: var(--font-primary);
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-dark-primary);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-secondary) 100%
+  );
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all var(--transition-normal);
+  text-decoration: none;
+  box-shadow: 
+    0 0 20px rgba(255, 0, 153, 0.5),
+    0 0 40px rgba(0, 217, 255, 0.3),
+    inset 0 0 20px rgba(255, 255, 255, 0.1);
+  z-index: 1;
+}
+
+.ctaButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left var(--transition-slow);
+}
+
+.ctaButton:hover::before {
+  left: 100%;
+}
+
+.ctaButton:hover {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-light) 0%,
+    var(--color-secondary-light) 100%
+  );
+  box-shadow: 
+    0 0 30px rgba(255, 0, 153, 0.8),
+    0 0 60px rgba(0, 217, 255, 0.6),
+    inset 0 0 30px rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.ctaButton:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 0 15px rgba(255, 0, 153, 0.6),
+    0 0 30px rgba(0, 217, 255, 0.4),
+    inset 0 0 15px rgba(255, 255, 255, 0.15);
+}
+
+/* ============================================
+   Button Text & Icon
+   ============================================ */
+.buttonText {
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.buttonIcon {
+  position: relative;
+  z-index: 2;
+  font-size: 1.5em;
+  font-weight: 700;
+  transition: transform var(--transition-normal);
+}
+
+.ctaButton:hover .buttonIcon {
+  transform: translateX(5px);
+}
+
+/* ============================================
+   Animated Border Effect
+   ============================================ */
+.borderTop,
+.borderRight,
+.borderBottom,
+.borderLeft {
+  position: absolute;
+  background: var(--color-secondary-light);
+  box-shadow: 0 0 10px var(--color-secondary-glow);
+}
+
+.borderTop {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  transform-origin: left;
+}
+
+.borderRight {
+  top: 0;
+  right: 0;
+  width: 3px;
+  height: 100%;
+  transform-origin: top;
+}
+
+.borderBottom {
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 3px;
+  transform-origin: right;
+}
+
+.borderLeft {
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  transform-origin: bottom;
+}
+
+/* ============================================
+   Glow Animation on Hover
+   ============================================ */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 20px rgba(255, 0, 153, 0.5),
+      0 0 40px rgba(0, 217, 255, 0.3),
+      inset 0 0 20px rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 0 30px rgba(255, 0, 153, 0.7),
+      0 0 60px rgba(0, 217, 255, 0.5),
+      inset 0 0 30px rgba(255, 255, 255, 0.15);
+  }
+}
+
+.ctaButton:hover {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 768px) {
+  .ctaButton {
+    padding: 1rem 2.5rem;
+    font-size: 1rem;
+  }
+
+  .buttonIcon {
+    font-size: 1.3em;
+  }
+}
+
+@media (max-width: 480px) {
+  .ctaButton {
+    padding: 0.9rem 2rem;
+    font-size: 0.875rem;
+    letter-spacing: 0.08em;
+  }
+
+  .buttonIcon {
+    font-size: 1.2em;
+  }
+}
+
+/* ============================================
+   Focus State for Accessibility
+   ============================================ */
+.ctaButton:focus-visible {
+  outline: 3px solid var(--color-secondary);
+  outline-offset: 5px;
+}
+
+/* ============================================
+   Reduced Motion
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .ctaButton,
+  .buttonIcon,
+  .ctaButton::before {
+    transition: none;
+    animation: none;
+  }
+
+  .ctaButton:hover .buttonIcon {
+    transform: none;
+  }
+}

@@ -1,0 +1,387 @@
+/* ============================================
+   Footer Component Styles
+   Organizer branding and info
+   ============================================ */
+
+.footer {
+  position: relative;
+  padding: var(--spacing-xl) var(--spacing-md) var(--spacing-md);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(10, 14, 39, 0.8) 20%,
+    rgba(5, 8, 16, 0.95) 100%
+  );
+  border-top: 1px solid rgba(255, 0, 153, 0.2);
+  z-index: var(--z-content);
+  overflow: hidden;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-primary) 25%,
+    var(--color-secondary) 50%,
+    var(--color-accent) 75%,
+    transparent 100%
+  );
+  box-shadow: 0 0 20px var(--color-primary-glow);
+  animation: topLinePulse 3s ease-in-out infinite;
+}
+
+.container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+/* ============================================
+   Branding Section
+   ============================================ */
+.brandingSection {
+  text-align: center;
+  width: 100%;
+}
+
+.organizer {
+  margin-bottom: var(--spacing-md);
+}
+
+.organizerName {
+  font-family: var(--font-primary);
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--color-secondary-light);
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+  margin-bottom: var(--spacing-xs);
+}
+
+.divider {
+  width: 60px;
+  height: 2px;
+  margin: var(--spacing-xs) auto;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-primary) 50%,
+    transparent 100%
+  );
+  box-shadow: 0 0 10px var(--color-primary-glow);
+}
+
+.presentsText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: var(--font-secondary);
+}
+
+.nexusVyoma {
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-primary);
+  text-shadow: 0 0 15px var(--color-primary-glow);
+}
+
+.presents {
+  font-size: clamp(0.75rem, 1.5vw, 1rem);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: var(--color-secondary-light);
+  opacity: 0.8;
+}
+
+/* ============================================
+   Event Title
+   ============================================ */
+.eventTitle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: var(--spacing-sm);
+}
+
+.nexusText {
+  font-family: var(--font-primary);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  color: var(--color-secondary-light);
+  text-shadow: 0 0 20px var(--color-secondary-glow),
+               0 0 40px var(--color-secondary-glow);
+  animation: neonFlicker 4s ease-in-out infinite;
+}
+
+.cipherText {
+  font-family: var(--font-primary);
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  background: var(--gradient-neon);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 15px var(--color-primary-glow));
+}
+
+/* ============================================
+   Decorative Line
+   ============================================ */
+.decorativeLine {
+  width: 100%;
+  max-width: 600px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-secondary) 20%,
+    var(--color-primary) 50%,
+    var(--color-secondary) 80%,
+    transparent 100%
+  );
+  box-shadow: 0 0 10px var(--color-secondary-glow);
+  transform-origin: center;
+}
+
+/* ============================================
+   Bottom Section
+   ============================================ */
+.bottomSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  text-align: center;
+  width: 100%;
+}
+
+.copyright {
+  font-family: var(--font-secondary);
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  font-weight: 400;
+  color: rgba(0, 240, 255, 0.6);
+  letter-spacing: 0.05em;
+}
+
+.tagline {
+  font-family: var(--font-primary);
+  font-size: clamp(0.875rem, 2vw, 1.125rem);
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--color-primary);
+  text-shadow: 0 0 10px var(--color-primary-glow);
+  text-transform: uppercase;
+}
+
+/* ============================================
+   Background Decoration
+   ============================================ */
+.bgDecoration {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+.bgDot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--color-secondary);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--color-secondary-glow);
+  animation: floatDot 6s ease-in-out infinite;
+}
+
+.bgDot:nth-child(1) {
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.bgDot:nth-child(2) {
+  top: 60%;
+  left: 80%;
+  animation-delay: 1.5s;
+}
+
+.bgDot:nth-child(3) {
+  top: 80%;
+  left: 20%;
+  animation-delay: 3s;
+}
+
+.bgDot:nth-child(4) {
+  top: 30%;
+  left: 90%;
+  animation-delay: 4.5s;
+}
+
+/* ============================================
+   Keyframe Animations
+   ============================================ */
+@keyframes topLinePulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes neonFlicker {
+  0%, 100% {
+    opacity: 1;
+  }
+  92%, 94% {
+    opacity: 0.8;
+  }
+  96% {
+    opacity: 1;
+  }
+}
+
+@keyframes floatDot {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) scale(1.5);
+    opacity: 0.7;
+  }
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 768px) {
+  .footer {
+    padding: var(--spacing-lg) var(--spacing-sm) var(--spacing-sm);
+  }
+
+  .content {
+    gap: var(--spacing-md);
+  }
+
+  .organizer {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .organizerName {
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+  }
+
+  .divider {
+    width: 50px;
+  }
+
+  .nexusVyoma {
+    font-size: 1.25rem;
+  }
+
+  .presents {
+    font-size: 0.75rem;
+  }
+
+  .eventTitle {
+    margin-top: 0;
+  }
+
+  .nexusText {
+    font-size: 2rem;
+    letter-spacing: 0.1em;
+  }
+
+  .cipherText {
+    font-size: 1.5rem;
+    letter-spacing: 0.15em;
+  }
+
+  .decorativeLine {
+    max-width: 80%;
+  }
+
+  .copyright {
+    font-size: 0.75rem;
+  }
+
+  .tagline {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: var(--spacing-md) var(--spacing-xs) var(--spacing-xs);
+  }
+
+  .content {
+    gap: var(--spacing-sm);
+  }
+
+  .organizerName {
+    font-size: 0.875rem;
+    letter-spacing: 0.08em;
+  }
+
+  .nexusVyoma {
+    font-size: 1.125rem;
+  }
+
+  .presents {
+    font-size: 0.7rem;
+  }
+
+  .nexusText {
+    font-size: 1.75rem;
+  }
+
+  .cipherText {
+    font-size: 1.25rem;
+  }
+
+  .copyright {
+    font-size: 0.7rem;
+  }
+
+  .tagline {
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+  }
+}
+
+/* ============================================
+   Reduced Motion
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .footer::before,
+  .nexusText,
+  .bgDot {
+    animation: none;
+  }
+}
