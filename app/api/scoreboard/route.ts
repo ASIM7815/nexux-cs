@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { executeWithRetry } from '@/lib/db/neon-client';
-import { teams, solves } from '@/lib/db/schema';
+import { accounts, solves } from '@/lib/db/schema';
 import { eq, sql, desc } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
@@ -9,29 +9,26 @@ export const revalidate = 0;
 
 export async function GET() {
   try {
-    // Get rankings with score calculation
+    // Admin-created teams are `team` accounts. Keep this query aligned with
+    // the team-management and flag-submission flows so a solve appears on
+    // both the server-rendered leaderboard and this refresh endpoint.
     const rankings = await executeWithRetry(
       () => db
         .select({
-          id: teams.id,
-          teamName: teams.name,
-          username: teams.name,
-          score: teams.score,
-          lastSolveTime: sql<Date | null>`(
-            SELECT MAX(${solves.solvedAt})
-            FROM ${solves}
-            WHERE ${solves.teamId} = ${teams.id}
-          )`.as('last_solve_time'),
-          solveCount: sql<number>`(
-            SELECT COUNT(*)::int
-            FROM ${solves}
-            WHERE ${solves.teamId} = ${teams.id}
-          )`.as('solve_count'),
+          id: accounts.id,
+          teamName: accounts.teamName,
+          username: accounts.username,
+          score: accounts.score,
+          lastSolveTime: accounts.lastSolveTime,
+          solveCount: sql<number>`count(${solves.id})`,
         })
-        .from(teams)
+        .from(accounts)
+        .leftJoin(solves, eq(accounts.id, solves.accountId))
+        .where(eq(accounts.accountType, 'team'))
+        .groupBy(accounts.id)
         .orderBy(
-          desc(teams.score),
-          sql`last_solve_time ASC NULLS LAST`
+          desc(accounts.score),
+          sql`COALESCE(${accounts.lastSolveTime}, ${accounts.createdAt}) ASC`
         ),
       5,
       300,

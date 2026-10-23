@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './AdminChallenges.module.css';
 
@@ -48,7 +48,6 @@ export default function AdminChallengesClient() {
   const router = useRouter();
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [filteredChallenges, setFilteredChallenges] = useState<Challenge[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [visibilityFilter, setVisibilityFilter] = useState<string>('all');
   const [showModal, setShowModal] = useState(false);
@@ -89,7 +88,7 @@ export default function AdminChallengesClient() {
   }, []);
   */
 
-  useEffect(() => {
+  const filteredChallenges = useMemo(() => {
     let filtered = challenges;
 
     if (selectedCategory !== 'all') {
@@ -102,7 +101,7 @@ export default function AdminChallengesClient() {
       filtered = filtered.filter(c => !c.is_visible);
     }
 
-    setFilteredChallenges(filtered);
+    return filtered;
   }, [challenges, selectedCategory, visibilityFilter]);
 
   async function fetchChallenges() {

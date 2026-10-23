@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import styles from './Challenges.module.css';
@@ -42,8 +42,8 @@ export default function ChallengesClient({ challenges: initialChallenges, catego
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [challenges, setChallenges] = useState<Challenge[]>(initialChallenges);
-  const [solvedIds, setSolvedIds] = useState<number[]>(initialSolvedIds);
+  const challenges = initialChallenges;
+  const solvedIds = initialSolvedIds;
 
   // Auto-refresh disabled for stability - data fetches on load only
   // Uncomment below to enable auto-refresh every 10 seconds
@@ -99,7 +99,7 @@ export default function ChallengesClient({ challenges: initialChallenges, catego
               Scoreboard
             </button>
             {session.user.accountType === 'admin' && (
-              <button className={styles.navLink} onClick={() => router.push('/arena/admin')}>
+              <button className={styles.navLink} onClick={() => router.push('/admin/dashboard')}>
                 Admin
               </button>
             )}

@@ -1,7 +1,7 @@
 'use client';
 
 import { signOut } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './Scoreboard.module.css';
 
@@ -72,7 +72,7 @@ export default function ScoreboardClient({ rankings: initialRankings, session }:
               Scoreboard
             </button>
             {session.user.accountType === 'admin' && (
-              <button className={styles.navLink} onClick={() => router.push('/arena/admin')}>
+              <button className={styles.navLink} onClick={() => router.push('/admin/dashboard')}>
                 Admin
               </button>
             )}

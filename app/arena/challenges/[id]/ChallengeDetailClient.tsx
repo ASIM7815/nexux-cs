@@ -158,7 +158,7 @@ export default function ChallengeDetailClient({
               Scoreboard
             </button>
             {session.user.accountType === 'admin' && (
-              <button className={styles.navLink} onClick={() => router.push('/arena/admin')}>
+              <button className={styles.navLink} onClick={() => router.push('/admin/dashboard')}>
                 Admin
               </button>
             )}
