@@ -13,7 +13,7 @@ const challengeSchema = z.object({
   description: z.string().trim().min(1).max(50_000),
   category_id: z.coerce.number().int().positive(),
   points: z.coerce.number().int().min(0).max(1_000_000),
-  flag: z.string().trim().min(1).max(500), // MANDATORY on create
+  flag: z.string().trim().max(500).optional(), // Now optional - can be empty
   additionalFlags: z.array(z.string().trim()).optional().default([]), // Array of additional flags
   is_visible: z.boolean().default(false),
   max_attempts: z.union([z.coerce.number().int().positive().max(1_000_000), z.null()]).default(null),
@@ -43,7 +43,8 @@ export async function POST(request: Request) {
       ),
       created AS (
         INSERT INTO challenges (title, description, category_id, points, flag, additional_flags, is_visible, max_attempts)
-        VALUES (${data.title}, ${data.description}, ${data.category_id}, ${data.points}, ${data.flag}, 
+        VALUES (${data.title}, ${data.description}, ${data.category_id}, ${data.points}, 
+                COALESCE(${data.flag || ''}, ''), 
                 ${data.additionalFlags && data.additionalFlags.length > 0 ? JSON.stringify(data.additionalFlags) : null}, 
                 ${data.is_visible}, ${data.max_attempts})
         WHERE NOT EXISTS (SELECT 1 FROM existing)

@@ -35,7 +35,8 @@ interface FormData {
   category_id: string;
   points: number;
   flag: string;
-  additionalFlags: string[]; // NEW: Array of additional flags
+  flagIsMandatory: boolean; // NEW: Toggle between mandatory/optional flag
+  additionalFlags: string[]; // Array of additional flags
   is_visible: boolean;
   max_attempts: number | null;
   hints: Hint[];
@@ -62,7 +63,8 @@ export default function AdminChallengesClient() {
     category_id: '',
     points: 100,
     flag: '',
-    additionalFlags: [], // NEW: Initialize empty array
+    flagIsMandatory: true, // NEW: Default to mandatory
+    additionalFlags: [], // Initialize empty array
     is_visible: true,
     max_attempts: null,
     hints: [],
@@ -137,6 +139,7 @@ export default function AdminChallengesClient() {
       category_id: categories[0]?.id || '',
       points: 100,
       flag: '',
+      flagIsMandatory: true, // Default to mandatory for new challenges
       additionalFlags: [],
       is_visible: true,
       max_attempts: null,
@@ -157,6 +160,7 @@ export default function AdminChallengesClient() {
       category_id: challenge.category_id,
       points: challenge.points,
       flag: '',
+      flagIsMandatory: false, // Optional on edit since flag already exists
       additionalFlags: [],
       is_visible: challenge.is_visible,
       max_attempts: challenge.max_attempts,
@@ -464,15 +468,41 @@ export default function AdminChallengesClient() {
               </div>
 
               <div className={styles.formGroup}>
-                  <label className={styles.label}>{editingChallenge ? 'New Flag (optional)' : 'Flag *'}</label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <label className={styles.label}>
+                    {editingChallenge ? 'New Flag (optional)' : `Flag ${formData.flagIsMandatory ? '(Mandatory) *' : '(Optional)'}`}
+                  </label>
+                  {!editingChallenge && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, flagIsMandatory: !formData.flagIsMandatory })}
+                      className={styles.toggleButton}
+                      style={{
+                        padding: '0.4rem 0.8rem',
+                        background: formData.flagIsMandatory ? '#fa5252' : '#51cf66',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '0.85rem',
+                        fontWeight: '500'
+                      }}
+                    >
+                      {formData.flagIsMandatory ? '🔒 Mandatory' : '🔓 Optional'}
+                    </button>
+                  )}
+                </div>
                 <input
                   type="text"
                   value={formData.flag}
                   onChange={(e) => setFormData({ ...formData, flag: e.target.value })}
                   className={styles.input}
-                  required={!editingChallenge}
+                  required={!editingChallenge && formData.flagIsMandatory}
                   placeholder="flag{example_flag_here}"
                 />
+                <p style={{ fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.6)', marginTop: '0.25rem' }}>
+                  ⚠️ Flags are never visible to participants - they can only submit attempts
+                </p>
               </div>
 
               {/* Additional Flags Section - NEW! */}
@@ -539,8 +569,11 @@ export default function AdminChallengesClient() {
                       onChange={(e) => setFormData({ ...formData, is_visible: e.target.checked })}
                       className={styles.checkbox}
                     />
-                    <span className={styles.label}>Visible to participants</span>
+                    <span className={styles.label}>Challenge is visible to teams</span>
                   </label>
+                  <p style={{ fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.6)', marginTop: '0.25rem' }}>
+                    Controls whether teams can see this challenge (not the flag)
+                  </p>
                 </div>
               </div>
 
