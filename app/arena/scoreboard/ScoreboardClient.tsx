@@ -69,11 +69,11 @@ export default function ScoreboardClient({ rankings: initialRankings, session }:
               Challenges
             </button>
             <button className={styles.navLink} onClick={() => router.push('/arena/scoreboard')}>
-              Scoreboard
+              Leaderboard
             </button>
             {session.user.accountType === 'admin' && (
               <button className={styles.navLink} onClick={() => router.push('/admin/dashboard')}>
-                Admin
+                Admin Dashboard
               </button>
             )}
           </nav>
