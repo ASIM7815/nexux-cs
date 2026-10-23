@@ -27,6 +27,7 @@ interface Challenge {
   is_visible: boolean;
   max_attempts: number | null;
   hints?: Hint[];
+  attachments?: Array<{ id: number; filename: string; file_url: string; file_size: number }>;
 }
 
 interface FormData {
@@ -160,7 +161,9 @@ export default function AdminChallengesClient() {
       additionalFlags: [],
       is_visible: challenge.is_visible,
       max_attempts: challenge.max_attempts,
-      hints: challenge.hints || []
+      hints: challenge.hints || [],
+      file: null,
+      fileUrl: challenge.attachments?.[0]?.file_url || '', // Pre-fill with existing file URL
     });
     setShowModal(true);
     setError('');
@@ -555,6 +558,16 @@ export default function AdminChallengesClient() {
               {/* File Upload Section */}
               <div className={styles.formGroup}>
                 <label className={styles.label}>Challenge File (Optional)</label>
+                {editingChallenge && formData.fileUrl && !formData.file && (
+                  <div style={{ marginBottom: '0.5rem', padding: '0.5rem', background: 'rgba(81, 207, 102, 0.1)', borderRadius: '6px' }}>
+                    <p style={{ fontSize: '0.9rem', color: '#51cf66', margin: 0 }}>
+                      📎 Current file: {formData.fileUrl.split('/').pop()}
+                    </p>
+                    <p style={{ fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.6)', marginTop: '0.25rem', marginBottom: 0 }}>
+                      Upload a new file to replace it, or leave empty to keep the current file
+                    </p>
+                  </div>
+                )}
                 <input
                   type="file"
                   id="challengeFile"
@@ -578,9 +591,11 @@ export default function AdminChallengesClient() {
                     ✓ {formData.file.name} ({(formData.file.size / 1024).toFixed(2)} KB)
                   </p>
                 )}
-                <p style={{ fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.6)', marginTop: '0.25rem' }}>
-                  Upload PDF, ZIP, images, videos, or text files (max 50MB)
-                </p>
+                {!formData.file && !editingChallenge && (
+                  <p style={{ fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.6)', marginTop: '0.25rem' }}>
+                    Upload PDF, ZIP, images, videos, or text files (max 50MB)
+                  </p>
+                )}
               </div>
 
               <div className={styles.hintsSection}>

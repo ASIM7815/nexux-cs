@@ -20,13 +20,23 @@ export async function GET() {
                  'penalty_points', COALESCE(h.cost, 0)
                ) ORDER BY h.display_order, h.created_at)
                FILTER (WHERE h.id IS NOT NULL), '[]'::json
-             ) AS hints
+             ) AS hints,
+             COALESCE(
+               (SELECT json_agg(json_build_object(
+                 'id', a.id,
+                 'filename', a.filename,
+                 'file_url', a.file_url,
+                 'file_size', a.file_size
+               ))
+               FROM challenge_attachments a
+               WHERE a.challenge_id = c.id), '[]'::json
+             ) AS attachments
       FROM challenges c
       LEFT JOIN categories cat ON c.category_id = cat.id
       LEFT JOIN hints h ON c.id = h.challenge_id
       GROUP BY c.id, cat.name
       ORDER BY c.created_at DESC NULLS LAST, c.id DESC
-    `, 5, 300);
+    `, 3, 150);
     return Response.json({ challenges });
   } catch (error) {
     console.error('Failed to fetch challenges:', getErrorMessage(error));

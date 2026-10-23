@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
         EXISTS (SELECT 1 FROM inserted_submission) AS submitted,
         COALESCE((SELECT is_correct FROM inserted_submission LIMIT 1), false) AS is_correct,
         COALESCE((SELECT points FROM awarded LIMIT 1), 0)::integer AS points_awarded
-    `, 5, 300);
+    `, 3, 150);
 
     if (!result?.participant_exists) return jsonError('Unauthorized', 401);
     if (!result.challenge_exists || !result.challenge_visible) return jsonError('Challenge not found', 404);
