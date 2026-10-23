@@ -32,6 +32,7 @@ export const challenges = pgTable('challenges', {
   categoryId: integer('category_id').references(() => categories.id, { onDelete: 'cascade' }),
   points: integer('points').notNull(),
   flag: varchar('flag', { length: 500 }).notNull(),
+  additionalFlags: text('additional_flags'), // NEW: Store as JSON array of alternative flags
   maxAttempts: integer('max_attempts'),
   isVisible: boolean('is_visible').default(true),
   author: varchar('author', { length: 255 }),

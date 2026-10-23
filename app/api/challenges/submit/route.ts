@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     // submissions and the unique solve constraint makes scoring idempotent.
     const [result] = await executeWithRetry(() => sql`
       WITH challenge AS MATERIALIZED (
-        SELECT id, flag, points, max_attempts
+        SELECT id, flag, additional_flags, points, max_attempts
         FROM challenges
         WHERE id = ${challengeId} AND is_visible = true
       ),
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
           AND submitted_at >= NOW() - INTERVAL '1 minute'
       ),
       eligible AS MATERIALIZED (
-        SELECT c.id, c.flag, c.points, p.team_name
+        SELECT c.id, c.flag, c.additional_flags, c.points, p.team_name
         FROM challenge c, participant p, attempt_state a, rate_state r, competition_state cs
         WHERE NOT EXISTS (SELECT 1 FROM existing_solve)
           AND (c.max_attempts IS NULL OR a.count < c.max_attempts)
@@ -78,7 +78,12 @@ export async function POST(request: NextRequest) {
       ),
       inserted_submission AS (
         INSERT INTO submissions (challenge_id, account_id, team_name, submitted_flag, is_correct, submitted_at)
-        SELECT id, ${accountId}, team_name, ${submittedFlagHash}, BTRIM(${flag}) = BTRIM(flag), NOW()
+        SELECT id, ${accountId}, team_name, ${submittedFlagHash}, 
+               (BTRIM(${flag}) = BTRIM(flag) OR 
+                BTRIM(${flag}) = ANY(
+                  SELECT jsonb_array_elements_text(COALESCE(additional_flags::jsonb, '[]'::jsonb))
+                )), 
+               NOW()
         FROM eligible
         RETURNING challenge_id, account_id, team_name, is_correct
       ),

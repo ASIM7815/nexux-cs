@@ -35,6 +35,7 @@ interface FormData {
   category_id: string;
   points: number;
   flag: string;
+  additionalFlags: string[]; // NEW: Array of additional flags
   is_visible: boolean;
   max_attempts: number | null;
   hints: Hint[];
@@ -61,6 +62,7 @@ export default function AdminChallengesClient() {
     category_id: '',
     points: 100,
     flag: '',
+    additionalFlags: [], // NEW: Initialize empty array
     is_visible: true,
     max_attempts: null,
     hints: [],
@@ -469,6 +471,46 @@ export default function AdminChallengesClient() {
                   required={!editingChallenge}
                   placeholder="flag{example_flag_here}"
                 />
+              </div>
+
+              {/* Additional Flags Section - NEW! */}
+              <div className={styles.additionalFlagsSection}>
+                <div className={styles.additionalFlagsHeader}>
+                  <label className={styles.label}>Additional Flags (Optional)</label>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, additionalFlags: [...formData.additionalFlags, ''] })}
+                    className={styles.addFlagButton}
+                  >
+                    + Add Flag
+                  </button>
+                </div>
+                <p className={styles.helpText}>Add alternative flags that also count as correct answers</p>
+                {formData.additionalFlags.map((flag, index) => (
+                  <div key={index} className={styles.additionalFlagItem}>
+                    <input
+                      type="text"
+                      value={flag}
+                      onChange={(e) => {
+                        const newFlags = [...formData.additionalFlags];
+                        newFlags[index] = e.target.value;
+                        setFormData({ ...formData, additionalFlags: newFlags });
+                      }}
+                      className={styles.input}
+                      placeholder={`Alternative flag ${index + 1}`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newFlags = formData.additionalFlags.filter((_, i) => i !== index);
+                        setFormData({ ...formData, additionalFlags: newFlags });
+                      }}
+                      className={styles.removeFlagButton}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
               </div>
 
               <div className={styles.formRow}>
