@@ -137,6 +137,7 @@ export default function AdminChallengesClient() {
       category_id: categories[0]?.id || '',
       points: 100,
       flag: '',
+      additionalFlags: [],
       is_visible: true,
       max_attempts: null,
       hints: [],
@@ -156,6 +157,7 @@ export default function AdminChallengesClient() {
       category_id: challenge.category_id,
       points: challenge.points,
       flag: '',
+      additionalFlags: [],
       is_visible: challenge.is_visible,
       max_attempts: challenge.max_attempts,
       hints: challenge.hints || []
